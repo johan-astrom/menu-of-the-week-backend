@@ -25,7 +25,7 @@ app.post('/recipes', (req, res) => {
         title: req.body.title,
         weekday: req.body.weekday
     }
-    let text = 'INSERT INTO recipes VALUES ($1, $2);'
+    let text = 'INSERT INTO recipes VALUES ($1, $2) RETURNING id;'
     let params = [data.title, data.weekday]
     db.query(text, params, (result, err) => {
         if (err){
@@ -36,7 +36,7 @@ app.post('/recipes', (req, res) => {
             res.json({
                 'message': 'success',
                 'recipe': data,
-                'id': this.lastId
+                'id': result.rows[0].id
             });
         }
     })
