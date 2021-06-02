@@ -15,7 +15,7 @@ db.createDatabase();
 app.get('/recipes', async (req, res) => {
     let recipes = await getAll('recipes');
     let ingredients = await getAll('ingredients');
-    for (let recipe of recipes){
+    for (let recipe of recipes) {
         recipe.ingredients = ingredients.filter((ingredient) => {
             return ingredient.recipe_id = recipe.id;
         })
@@ -68,18 +68,7 @@ app.post('/recipes', async (req, res) => {
                 });
             }
 
-
-            params = [];
-            for (let ingredient of data.ingredients) {
-                params.push([
-                    ingredient.name,
-                    ingredient.amount,
-                    ingredient.measurement,
-                    recipeId
-                ]);
-            }
-            text = pgFormat("INSERT INTO ingredients (name, amount, measurement, recipe_id) " +
-                "VALUES %L;", params);
+            text = ingredientQuery(data, recipeId);
             client.query(text, [], err => {
                 if (err) {
                     console.error('Error persisting ingredient: ' + err.message);
@@ -95,13 +84,57 @@ app.post('/recipes', async (req, res) => {
     }
 });
 
+app.put('/recipes/:id', async (req, res) => {
+    const client = await db.connect();
+    try {
+        await client.query('BEGIN');
+
+        let recipe = req.body;
+        let recipeId = req.params.id;
+
+        let text = 'UPDATE recipes SET title=$1, weekday=$2 WHERE id=$3;'
+        let params = [recipe.title, recipe.weekday, recipeId];
+        await client.query(text, params);
+
+        await client.query('DELETE FROM ingredients WHERE recipe_id=$1;', recipeId);
+
+        text = ingredientQuery(recipe, recipeId);
+        await client.query(text);
+
+        await client.query('COMMIT');
+
+        res.json({
+            'message': 'success',
+            'recipe': recipe,
+        });
+    }catch (err){
+        await client.query('ROLLBACK');
+    }finally{
+        client.release();
+    }
+});
 
 
 async function getAll(table) {
     try {
         const res = await db.query(`SELECT * FROM ${table}`);
         return res.rows;
-    }catch (err){
+    } catch (err) {
         return err.message;
     }
 };
+
+function ingredientQuery(data, recipeId) {
+    let params = [];
+    for (let ingredient of data.ingredients) {
+        params.push([
+            ingredient.name,
+            ingredient.amount,
+            ingredient.measurement,
+            recipeId
+        ]);
+    }
+    let text = pgFormat("INSERT INTO ingredients (name, amount, measurement, recipe_id) " +
+        "VALUES %L;", params);
+    return text;
+}
