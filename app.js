@@ -16,9 +16,8 @@ app.get('/recipes', async (req, res) => {
     let recipes = await getAll('recipes');
     let ingredients = await getAll('ingredients');
     for (let recipe of recipes) {
-        recipe.ingredients = ingredients.filter((ingredient) => {
-            return ingredient.recipe_id = recipe.id;
-        })
+        recipe.ingredients = ingredients.filter(ingredient => ingredient.recipe_id === recipe.id
+        )
     }
     res.json({
         'message': 'success',
@@ -83,7 +82,7 @@ app.post('/recipes', async (req, res) => {
         client.release();
     }
 });
-
+//todo funkar ej
 app.put('/recipes/:id', async (req, res) => {
     const client = await db.connect();
     try {
@@ -109,6 +108,7 @@ app.put('/recipes/:id', async (req, res) => {
         });
     }catch (err){
         await client.query('ROLLBACK');
+        console.log('Something went wrong - commit failed.')
     }finally{
         client.release();
     }
