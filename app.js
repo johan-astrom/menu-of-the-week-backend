@@ -1,6 +1,7 @@
 const app = require('express')();
 const db = require('./db');
 const bodyParser = require('body-parser');
+const pgFormat = require('pg-format');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -26,7 +27,75 @@ app.get('/recipes', (req, res) => {
     });
 });
 
-app.post('/recipes', (req, res) => {
+app.get('/ingredients', (req, res) => {
+    db.query('SELECT * FROM ingredients', [], (err, result) => {
+        if (err) {
+            res.status(400).json({
+                'error': err.message
+            });
+        } else {
+            res.json({
+                'message': 'success',
+                'ingredients': result.rows
+            });
+        }
+    });
+});
+
+app.post('/recipes', async (req, res) => {
+    const client = await db.connect();
+
+    try {
+        await client.query('BEGIN');
+
+        let data = {
+            title: req.body.title,
+            weekday: req.body.weekday,
+            ingredients: req.body.ingredients
+        };
+        let recipeId = 0;
+
+        let text = 'INSERT INTO recipes (title, weekday) VALUES ($1, $2) RETURNING id;';
+        let params = [data.title, data.weekday];
+        await client.query(text, params, (err, result) => {
+            if (err) {
+                console.error('Error persisting recipe: ' + err.message);
+            } else {
+                recipeId = result.rows[0].id;
+                console.log('RecipeId inside first query: ' + recipeId);
+                res.json({
+                    'message': 'success',
+                    'recipe': data,
+                    'id': recipeId
+                });
+            }
+
+
+        params = [];
+        for (let ingredient of data.ingredients) {
+            params.push([
+                ingredient.name,
+                ingredient.amount,
+                ingredient.measurement,
+                recipeId
+            ]);
+        }
+        text = pgFormat("INSERT INTO ingredients (name, amount, measurement, recipeId) " +
+            "VALUES %L;", params);
+        client.query(text, [], err => {
+            if (err){
+                console.error('Error persisting ingredient: ' + err.message);
+            }
+        });
+        });
+
+        await client.query('COMMIT');
+    } catch (err){
+        await client.query('ROLLBACK');
+    } finally{
+        client.release();
+    }
+/*
     db.query('BEGIN', (err, result) => {
         if (err) {
             res.status(400).json({
@@ -38,7 +107,7 @@ app.post('/recipes', (req, res) => {
             weekday: req.body.weekday,
             ingredients: req.body.ingredients
         };
-        console.log(data.ingredients)
+        console.log('data: ' + JSON.stringify(data));
         let recipeId = 0;
 
         let text = 'INSERT INTO recipes (title, weekday) VALUES ($1, $2) RETURNING id;';
@@ -55,28 +124,31 @@ app.post('/recipes', (req, res) => {
                 });
             }
 
-//todo endast senaste ingrediensen committas.
+            params = [];
             for (let ingredient of data.ingredients) {
-                let text = "INSERT INTO ingredients (name, amount, measurement, recipeId) " +
-                    "VALUES ($1, $2, $3, $4)";
-                let params = [
+                params.push([
                     ingredient.name,
                     ingredient.amount,
                     ingredient.measurement,
                     recipeId
-                ];
-                console.log(params);
-                db.query(text, params, (err, result) => {
-                    if (err) {
-                        console.error('Error persisting ingredients: ' + err.message);
-                    }
-                });
+                ]);
             }
+            text = pgFormat("INSERT INTO ingredients (name, amount, measurement, recipeId) " +
+                "VALUES %L;", params);
+            console.log(text)
+            db.query(text, [], err => {
+                if (err){
+                    console.error('Error persisting ingredient: ' + err.message);
+                }
+            });
+
             db.query('COMMIT', err => {
                 if (err) {
                     console.error('Error committing transaction: ' + err.message);
+                } else {
+                    console.log('Commit successful - recipe persisted!')
                 }
             });
         });
-    });
+    });*/
 });

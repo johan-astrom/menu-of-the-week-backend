@@ -12,6 +12,9 @@ module.exports = {
     query: (text, params, callback) => {
         return pool.query(text, params, callback);
     },
+    connect: () =>{
+        return pool.connect();
+    },
     createDatabase: () => {
         pool.query("CREATE TABLE IF NOT EXISTS recipes (id SERIAL PRIMARY KEY, title TEXT, weekday VARCHAR(9))",
             [], err => {
