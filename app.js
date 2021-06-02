@@ -15,8 +15,11 @@ db.createDatabase();
 app.get('/recipes', async (req, res) => {
     let recipes = await getAll('recipes');
     let ingredients = await getAll('ingredients');
-    console.log(recipes);
-    console.log(ingredients);
+    for (let recipe of recipes){
+        recipe.ingredients = ingredients.filter((ingredient) => {
+            return ingredient.recipeId = recipe.id;
+        })
+    }
 });
 
 app.get('/ingredients', (req, res) => {
