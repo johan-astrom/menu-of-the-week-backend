@@ -12,19 +12,11 @@ app.listen(port, () => console.log(`server running on port: ${port}`));
 
 db.createDatabase();
 
-app.get('/recipes', (req, res) => {
-    db.query('SELECT * FROM recipes JOIN ingredients ON recipes.id = ingredients.recipeId;', [], (err, result) => {
-        if (err) {
-            res.status(400).json({
-                'error': err.message
-            });
-        } else {
-            res.json({
-                'message': 'success',
-                'recipes': result.rows
-            });
-        }
-    });
+app.get('/recipes', async (req, res) => {
+    let recipes = await getAll('recipes');
+    let ingredients = await getAll('ingredients');
+    console.log(recipes);
+    console.log(ingredients);
 });
 
 app.get('/ingredients', (req, res) => {
@@ -71,28 +63,37 @@ app.post('/recipes', async (req, res) => {
             }
 
 
-        params = [];
-        for (let ingredient of data.ingredients) {
-            params.push([
-                ingredient.name,
-                ingredient.amount,
-                ingredient.measurement,
-                recipeId
-            ]);
-        }
-        text = pgFormat("INSERT INTO ingredients (name, amount, measurement, recipeId) " +
-            "VALUES %L;", params);
-        client.query(text, [], err => {
-            if (err){
-                console.error('Error persisting ingredient: ' + err.message);
+            params = [];
+            for (let ingredient of data.ingredients) {
+                params.push([
+                    ingredient.name,
+                    ingredient.amount,
+                    ingredient.measurement,
+                    recipeId
+                ]);
             }
-        });
+            text = pgFormat("INSERT INTO ingredients (name, amount, measurement, recipeId) " +
+                "VALUES %L;", params);
+            client.query(text, [], err => {
+                if (err) {
+                    console.error('Error persisting ingredient: ' + err.message);
+                }
+            });
         });
 
         await client.query('COMMIT');
-    } catch (err){
+    } catch (err) {
         await client.query('ROLLBACK');
-    } finally{
+    } finally {
         client.release();
     }
 });
+
+async function getAll(table) {
+    try {
+        const res = await db.query(`SELECT * FROM ${table}`);
+        return res.rows;
+    }catch (err){
+        return err.message;
+    }
+}
