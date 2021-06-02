@@ -17,7 +17,7 @@ app.get('/recipes', async (req, res) => {
     let ingredients = await getAll('ingredients');
     for (let recipe of recipes){
         recipe.ingredients = ingredients.filter((ingredient) => {
-            return ingredient.recipeId = recipe.id;
+            return ingredient.recipe_id = recipe.id;
         })
     }
     res.json({
@@ -61,7 +61,6 @@ app.post('/recipes', async (req, res) => {
                 console.error('Error persisting recipe: ' + err.message);
             } else {
                 recipeId = result.rows[0].id;
-                console.log('RecipeId inside first query: ' + recipeId);
                 res.json({
                     'message': 'success',
                     'recipe': data,
@@ -79,7 +78,7 @@ app.post('/recipes', async (req, res) => {
                     recipeId
                 ]);
             }
-            text = pgFormat("INSERT INTO ingredients (name, amount, measurement, recipeId) " +
+            text = pgFormat("INSERT INTO ingredients (name, amount, measurement, recipe_id) " +
                 "VALUES %L;", params);
             client.query(text, [], err => {
                 if (err) {
@@ -96,6 +95,8 @@ app.post('/recipes', async (req, res) => {
     }
 });
 
+
+
 async function getAll(table) {
     try {
         const res = await db.query(`SELECT * FROM ${table}`);
@@ -103,4 +104,4 @@ async function getAll(table) {
     }catch (err){
         return err.message;
     }
-}
+};
