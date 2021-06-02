@@ -20,6 +20,10 @@ app.get('/recipes', async (req, res) => {
             return ingredient.recipeId = recipe.id;
         })
     }
+    res.json({
+        'message': 'success',
+        'recipes': recipes
+    });
 });
 
 app.get('/ingredients', (req, res) => {
