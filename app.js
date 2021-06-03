@@ -82,7 +82,7 @@ app.post('/recipes', async (req, res) => {
         client.release();
     }
 });
-//todo funkar ej
+
 app.put('/recipes/:id', async (req, res) => {
     const client = await db.connect();
     try {
@@ -95,7 +95,7 @@ app.put('/recipes/:id', async (req, res) => {
         let params = [recipe.title, recipe.weekday, recipeId];
         await client.query(text, params);
 
-        await client.query('DELETE FROM ingredients WHERE recipe_id=$1;', recipeId);
+        await client.query('DELETE FROM ingredients WHERE recipe_id=$1;', [recipeId]);
 
         text = ingredientQuery(recipe, recipeId);
         await client.query(text);
@@ -108,7 +108,9 @@ app.put('/recipes/:id', async (req, res) => {
         });
     }catch (err){
         await client.query('ROLLBACK');
-        console.log('Something went wrong - commit failed.')
+        res.status(400).json({
+            'error': err.stack
+        })
     }finally{
         client.release();
     }
