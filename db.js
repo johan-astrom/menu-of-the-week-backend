@@ -23,7 +23,7 @@ module.exports = {
                 }
             });
         pool.query("CREATE TABLE IF NOT EXISTS ingredients " +
-            "(id SERIAL PRIMARY KEY, name TEXT, amount SMALLINT, measurement TEXT, recipe_id INT)",
+            "(id SERIAL PRIMARY KEY, name TEXT, quantity SMALLINT, measurement TEXT, purchased BOOLEAN, recipe_id INT)",
             [], err => {
                 if (err) {
                     console.log(err)

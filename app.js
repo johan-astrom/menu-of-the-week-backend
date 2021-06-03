@@ -131,12 +131,13 @@ function ingredientQuery(data, recipeId) {
     for (let ingredient of data.ingredients) {
         params.push([
             ingredient.name,
-            ingredient.amount,
+            ingredient.quantity,
             ingredient.measurement,
+            ingredient.purchased,
             recipeId
         ]);
     }
-    let text = pgFormat("INSERT INTO ingredients (name, amount, measurement, recipe_id) " +
+    let text = pgFormat("INSERT INTO ingredients (name, quantity, measurement, purchased, recipe_id) " +
         "VALUES %L;", params);
     return text;
 }
