@@ -130,9 +130,9 @@ function ingredientQuery(data, recipeId) {
     let params = [];
     for (let ingredient of data.ingredients) {
         params.push([
-            ingredient.name,
-            ingredient.quantity,
-            ingredient.measurement,
+            ingredient.ingredientName,
+            ingredient.ingredientQty,
+            ingredient.ingredientWeight,
             ingredient.purchased,
             recipeId
         ]);
