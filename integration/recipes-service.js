@@ -4,6 +4,18 @@ const recipesRepository = require('./recipes-repository');
 module.exports = {
 
     getAllRecipes: async function () {
-        return mapper.mapArray(await recipesRepository.getAllRecipes());
+        try{
+            return mapper.mapArray(await recipesRepository.getAllRecipes());
+        }catch (err){
+            throw err
+        }
+    },
+
+    getAllIngredients: async function (){
+        try{
+            return mapper.mapArray(await recipesRepository.getAllIngredients());
+        }catch (err){
+            throw err
+        }
     }
 }

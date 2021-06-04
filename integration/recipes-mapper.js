@@ -1,7 +1,12 @@
 module.exports = {
 
     mapArray: function (array) {
-        return Array.from(array);
+        if (!array){
+            return [];
+        }else {
+            return Array.from(array);
+        }
     }
+
 
 }

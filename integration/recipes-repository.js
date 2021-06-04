@@ -17,6 +17,10 @@ module.exports = {
         return recipes;
     },
 
+    getAllIngredients: async function (){
+        let ingredients = db.query('SELECT * FROM ingredients');
+    }
+
 
 }
 

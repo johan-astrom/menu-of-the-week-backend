@@ -16,32 +16,31 @@ app.listen(port, () => console.log(`server running on port: ${port}`));
 db.createDatabase();
 
 app.get('/recipes', async (req, res) => {
-    // let recipes = await getAll('recipes');
-    // let ingredients = await getAll('ingredients');
-    // for (let recipe of recipes) {
-    //     recipe.ingredients = ingredients.filter(ingredient => ingredient.recipe_id === recipe.id
-    //     )
-    // }
-    let recipes = await service.getAllRecipes();
-    res.json({
-        'message': 'success',
-        'recipes': recipes
-    });
+    try {
+        let recipes = await service.getAllRecipes();
+        res.json({
+            'message': 'success',
+            'recipes': recipes
+        });
+    } catch (err) {
+        res.status(400).json({
+            'error': err.message
+        })
+    }
 });
 
-app.get('/ingredients', (req, res) => {
-    db.query('SELECT * FROM ingredients', [], (err, result) => {
-        if (err) {
-            res.status(400).json({
-                'error': err.message
-            });
-        } else {
-            res.json({
-                'message': 'success',
-                'ingredients': result.rows
-            });
-        }
-    });
+app.get('/ingredients', async (req, res) => {
+    try {
+        let ingredients = await service.getAllIngredients();
+        res.json({
+            'message': 'success',
+            'ingredients': ingredients
+        });
+    } catch (err) {
+        res.status(400).json({
+            'error': err.message
+        })
+    }
 });
 
 app.post('/recipes', async (req, res) => {
