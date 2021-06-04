@@ -1,9 +1,9 @@
 const app = require('express')();
 const bodyParser = require('body-parser');
-const db = require('./db');
+const db = require('../resource/db');
 const pgFormat = require('pg-format');
 const cors = require('cors');
-const service = require('./recipes-service');
+const service = require('../integration/recipes-service');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());

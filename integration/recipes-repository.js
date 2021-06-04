@@ -1,4 +1,4 @@
-const db = require('./db');
+const db = require('../resource/db');
 const bodyParser = require('body-parser');
 const pgFormat = require('pg-format');
 
