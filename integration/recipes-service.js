@@ -1,11 +1,11 @@
 const mapper = require('./recipes-mapper');
-const recipesRepository = require('./recipes-repository');
+const repository = require('./recipes-repository');
 
 module.exports = {
 
     getAllRecipes: async function () {
         try {
-            return mapper.mapArray(await recipesRepository.getAllRecipes());
+            return mapper.mapArray(await repository.getAllRecipes());
         } catch (err) {
             throw err
         }
@@ -13,7 +13,7 @@ module.exports = {
 
     getAllIngredients: async function () {
         try {
-            return mapper.mapArray(await recipesRepository.getAllIngredients());
+            return mapper.mapArray(await repository.getAllIngredients());
         } catch (err) {
             throw err;
         }
@@ -21,7 +21,7 @@ module.exports = {
 
     createRecipe: async function (recipe) {
         try {
-            return mapper.mapRecipeToDto(await recipesRepository.createRecipe(mapper.mapDtoToRecipe(recipe)));
+            return mapper.mapRecipeToDto(await repository.createRecipe(mapper.mapDtoToRecipe(recipe)));
         } catch (err) {
             throw err;
         }
@@ -29,7 +29,15 @@ module.exports = {
 
     updateRecipe: async function (recipe, id) {
         try {
-            return mapper.mapRecipeToDto(await recipesRepository.updateRecipe(mapper.mapDtoToRecipe(recipe), id))
+            return mapper.mapRecipeToDto(await repository.updateRecipe(mapper.mapDtoToRecipe(recipe), id));
+        } catch (err) {
+            throw err;
+        }
+    },
+
+    deleteRecipe: async function (id) {
+        try {
+            return repository.deleteRecipe(id);
         } catch (err) {
             throw err;
         }

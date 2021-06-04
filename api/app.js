@@ -73,32 +73,15 @@ app.put('/recipes/:id', async (req, res) => {
 });
 
 app.delete('/recipes/:id', async (req, res) => {
-    const client = await db.connect();
-    try {
-        await client.query('BEGIN');
-
-        let recipeId = req.params.id;
-
-        let text = 'DELETE FROM recipes WHERE id=$1';
-        let params = [recipeId];
-        await client.query(text, params);
-
-        text = 'DELETE FROM ingredients WHERE recipe_id=$1';
-        params = [recipeId];
-        await client.query(text, params);
-
-        await client.query('COMMIT');
-
+    try{
+        service.deleteRecipe(req.params.id);
         res.status(200).json({
             'message': 'success'
         })
-    } catch (err) {
-        await client.query('ROLLBACK');
-        res.status(200).json({
-            'error': err.stack
+    }catch(err){
+        res.status(400).json({
+            'error': err.message
         })
-    } finally {
-        client.release();
     }
 })
 

@@ -85,8 +85,30 @@ module.exports = {
         } finally {
             client.release();
         }
-    }
+    },
 
+    deleteRecipe: async function(id){
+        const client = await db.connect();
+        try {
+            await client.query('BEGIN');
+
+            let text = 'DELETE FROM recipes WHERE id=$1';
+            let params = [id];
+            await client.query(text, params);
+
+            text = 'DELETE FROM ingredients WHERE recipe_id=$1';
+            params = [id];
+            await client.query(text, params);
+
+            await client.query('COMMIT');
+
+        } catch (err) {
+            await client.query('ROLLBACK');
+            throw err;
+        } finally {
+            client.release();
+        }
+    }
 
 }
 
