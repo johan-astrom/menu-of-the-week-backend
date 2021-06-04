@@ -1,7 +1,5 @@
 const app = require('express')();
 const bodyParser = require('body-parser');
-const db = require('../resource/db');
-const pgFormat = require('pg-format');
 const cors = require('cors');
 const service = require('../integration/recipes-service');
 
@@ -12,8 +10,6 @@ app.use(cors());
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => console.log(`server running on port: ${port}`));
-
-db.createDatabase();
 
 app.get('/recipes', async (req, res) => {
     try {
