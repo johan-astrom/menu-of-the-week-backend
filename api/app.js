@@ -74,7 +74,7 @@ app.put('/recipes/:id', async (req, res) => {
 
 app.delete('/recipes/:id', async (req, res) => {
     try{
-        service.deleteRecipe(req.params.id);
+        await service.deleteRecipe(req.params.id);
         res.status(200).json({
             'message': 'success'
         })
