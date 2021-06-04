@@ -52,41 +52,23 @@ app.post('/recipes', async (req, res) => {
         });
     } catch (err) {
         res.status(400).json({
-            'error': err.stack
+            'error': err.message
         })
     }
 });
 
 app.put('/recipes/:id', async (req, res) => {
-    const client = await db.connect();
     try {
-        await client.query('BEGIN');
-
-        let recipe = req.body;
-        let recipeId = req.params.id;
-
-        let text = 'UPDATE recipes SET title=$1, weekday=$2 WHERE id=$3;'
-        let params = [recipe.title, recipe.weekday, recipeId];
-        await client.query(text, params);
-
-        await client.query('DELETE FROM ingredients WHERE recipe_id=$1;', [recipeId]);
-
-        text = ingredientQuery(recipe, recipeId);
-        await client.query(text);
-
-        await client.query('COMMIT');
-
-        res.json({
+        let response = await service.updateRecipe(req.body, req.params.id);
+        res.status(200).json({
             'message': 'success',
-            'recipe': recipe,
-        });
-    } catch (err) {
-        await client.query('ROLLBACK');
-        res.status(400).json({
-            'error': err.stack
+            'recipe': response,
+            'id': req.params.id
         })
-    } finally {
-        client.release();
+    }catch (err){
+        res.status(400).json({
+            'error': err.message
+        })
     }
 });
 

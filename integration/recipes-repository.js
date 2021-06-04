@@ -59,6 +59,32 @@ module.exports = {
         } finally {
             client.release();
         }
+    },
+
+    updateRecipe: async function (recipe, id){
+        const client = await db.connect();
+        try {
+            await client.query('BEGIN');
+
+            let text = 'UPDATE recipes SET title=$1, weekday=$2 WHERE id=$3;'
+            let params = [recipe.title, recipe.weekday, id];
+            await client.query(text, params);
+
+            await client.query('DELETE FROM ingredients WHERE recipe_id=$1;', [id]);
+
+            text = ingredientQuery(recipe, id);
+            await client.query(text);
+
+            await client.query('COMMIT');
+
+            return recipe;
+        } catch (err) {
+            await client.query('ROLLBACK');
+            throw err;
+
+        } finally {
+            client.release();
+        }
     }
 
 

@@ -24,6 +24,7 @@ module.exports = {
 
     mapRecipeToDto: function (recipe){
         return{
+            id: recipe.id,
             title: recipe.title,
             ingredients: generateDtoIngredients(recipe),
             weekday: recipe.weekday,
@@ -50,6 +51,7 @@ let generateIngredients = function(recipe){
 
 let generateDtoIngredients = function(recipe){
     let ingredients = [];
+
     for (let ingredient of recipe.ingredients){
         let mappedIngredient = {
             ingredientName: ingredient.name,
