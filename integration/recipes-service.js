@@ -21,7 +21,7 @@ module.exports = {
 
     createRecipe: async function(recipe){
         try{
-            return await recipesRepository.createRecipe(mapper.mapDtoToRecipe(recipe));
+            return mapper.mapRecipeToDto(await recipesRepository.createRecipe(mapper.mapDtoToRecipe(recipe)));
         }catch (err){
             throw err;
         }

@@ -46,10 +46,13 @@ app.get('/ingredients', async (req, res) => {
 app.post('/recipes', async (req, res) => {
     try {
         let response = await service.createRecipe(req.body);
-        res.status(200).json(response);
+        res.status(200).json({
+            'message': 'success',
+            'recipe': response
+        });
     } catch (err) {
         res.status(400).json({
-            'error': err.message
+            'error': err.stack
         })
     }
 });

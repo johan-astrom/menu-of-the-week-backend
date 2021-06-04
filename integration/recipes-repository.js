@@ -6,7 +6,7 @@ db.createDatabase();
 
 module.exports = {
 
-     getAllRecipes: async function () {
+    getAllRecipes: async function () {
         let recipes = await getAll('recipes');
         let ingredients = await getAll('ingredients');
         for (let recipe of recipes
@@ -17,11 +17,11 @@ module.exports = {
         return recipes;
     },
 
-    getAllIngredients: async function (){
+    getAllIngredients: async function () {
         let ingredients = db.query('SELECT * FROM ingredients');
     },
 
-    createRecipe: async function (recipe){
+    createRecipe: async function (recipe) {
         const client = await db.connect();
 
         try {
@@ -52,11 +52,7 @@ module.exports = {
             });
 
             await client.query('COMMIT');
-            return{
-                'message': 'success',
-                'recipe': data,
-                'id': recipeId
-            }
+            return data;
         } catch (err) {
             await client.query('ROLLBACK');
             throw err;
@@ -68,7 +64,7 @@ module.exports = {
 
 }
 
-let getAll = async function(table) {
+let getAll = async function (table) {
     try {
         const res = await db.query(`SELECT * FROM ${table}`);
         return res.rows;
