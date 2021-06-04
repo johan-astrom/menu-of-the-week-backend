@@ -15,7 +15,15 @@ module.exports = {
         try{
             return mapper.mapArray(await recipesRepository.getAllIngredients());
         }catch (err){
-            throw err
+            throw err;
+        }
+    },
+
+    createRecipe: async function(recipe){
+        try{
+            return await recipesRepository.createRecipe(mapper.mapDtoToRecipe(recipe));
+        }catch (err){
+            throw err;
         }
     }
 }

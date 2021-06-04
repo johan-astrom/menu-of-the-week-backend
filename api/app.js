@@ -44,45 +44,13 @@ app.get('/ingredients', async (req, res) => {
 });
 
 app.post('/recipes', async (req, res) => {
-    const client = await db.connect();
-
     try {
-        await client.query('BEGIN');
-
-        let data = {
-            title: req.body.title,
-            weekday: req.body.weekday,
-            ingredients: req.body.ingredients
-        };
-        let recipeId = 0;
-
-        let text = 'INSERT INTO recipes (title, weekday) VALUES ($1, $2) RETURNING id;';
-        let params = [data.title, data.weekday];
-        await client.query(text, params, (err, result) => {
-            if (err) {
-                console.error('Error persisting recipe: ' + err.message);
-            } else {
-                recipeId = result.rows[0].id;
-                res.json({
-                    'message': 'success',
-                    'recipe': data,
-                    'id': recipeId
-                });
-            }
-
-            text = ingredientQuery(data, recipeId);
-            client.query(text, [], err => {
-                if (err) {
-                    console.error('Error persisting ingredient: ' + err.message);
-                }
-            });
-        });
-
-        await client.query('COMMIT');
+        let response = await service.createRecipe(req.body);
+        res.status(200).json(response);
     } catch (err) {
-        await client.query('ROLLBACK');
-    } finally {
-        client.release();
+        res.status(400).json({
+            'error': err.message
+        })
     }
 });
 
@@ -150,18 +118,4 @@ app.delete('/recipes/:id', async (req, res) => {
 })
 
 
-function ingredientQuery(data, recipeId) {
-    let params = [];
-    for (let ingredient of data.ingredients) {
-        params.push([
-            ingredient.ingredientName,
-            ingredient.ingredientQty,
-            ingredient.ingredientWeight,
-            ingredient.purchased,
-            recipeId
-        ]);
-    }
-    let text = pgFormat("INSERT INTO ingredients (name, quantity, measurement, purchased, recipe_id) " +
-        "VALUES %L;", params);
-    return text;
-}
+
