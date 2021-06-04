@@ -1,8 +1,9 @@
 const app = require('express')();
-const db = require('./db');
 const bodyParser = require('body-parser');
+const db = require('./db');
 const pgFormat = require('pg-format');
 const cors = require('cors');
+const service = require('./recipes-service');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -15,12 +16,13 @@ app.listen(port, () => console.log(`server running on port: ${port}`));
 db.createDatabase();
 
 app.get('/recipes', async (req, res) => {
-    let recipes = await getAll('recipes');
-    let ingredients = await getAll('ingredients');
-    for (let recipe of recipes) {
-        recipe.ingredients = ingredients.filter(ingredient => ingredient.recipe_id === recipe.id
-        )
-    }
+    // let recipes = await getAll('recipes');
+    // let ingredients = await getAll('ingredients');
+    // for (let recipe of recipes) {
+    //     recipe.ingredients = ingredients.filter(ingredient => ingredient.recipe_id === recipe.id
+    //     )
+    // }
+    let recipes = await service.getAllRecipes();
     res.json({
         'message': 'success',
         'recipes': recipes
@@ -148,15 +150,6 @@ app.delete('/recipes/:id', async (req, res) => {
     }
 })
 
-
-async function getAll(table) {
-    try {
-        const res = await db.query(`SELECT * FROM ${table}`);
-        return res.rows;
-    } catch (err) {
-        return err.message;
-    }
-};
 
 function ingredientQuery(data, recipeId) {
     let params = [];
