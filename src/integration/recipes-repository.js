@@ -18,7 +18,12 @@ module.exports = {
     },
 
     getAllIngredients: async function () {
-        let ingredients = db.query('SELECT * FROM ingredients');
+        try{
+            let result = await db.query('SELECT * FROM ingredients');
+            return result.rows;
+        }catch (err) {
+            throw err;
+        }
     },
 
     createRecipe: async function (recipe) {
@@ -117,7 +122,7 @@ let getAll = async function (table) {
         const res = await db.query(`SELECT * FROM ${table}`);
         return res.rows;
     } catch (err) {
-        return err.message;
+        throw err;
     }
 }
 

@@ -1,17 +1,12 @@
-const app = require('express')();
-const bodyParser = require('body-parser');
-const cors = require('cors');
 const service = require('../integration/recipes-service');
+const express = require('express');
+const router = express.Router();
+const bodyParser = require('body-parser');
 
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
-app.use(cors());
+router.use(bodyParser.urlencoded({extended: false}));
+router.use(bodyParser.json());
 
-const port = process.env.PORT || 3000;
-
-app.listen(port, () => console.log(`server running on port: ${port}`));
-
-app.get('/recipes', async (req, res) => {
+router.get('/recipes', async (req, res) => {
     try {
         let recipes = await service.getAllRecipes();
         res.json({
@@ -25,7 +20,7 @@ app.get('/recipes', async (req, res) => {
     }
 });
 
-app.get('/ingredients', async (req, res) => {
+router.get('/ingredients', async (req, res) => {
     try {
         let ingredients = await service.getAllIngredients();
         res.json({
@@ -39,7 +34,7 @@ app.get('/ingredients', async (req, res) => {
     }
 });
 
-app.post('/recipes', async (req, res) => {
+router.post('/recipes', async (req, res) => {
     try {
         let response = await service.createRecipe(req.body);
         res.status(200).json({
@@ -53,7 +48,7 @@ app.post('/recipes', async (req, res) => {
     }
 });
 
-app.put('/recipes/:id', async (req, res) => {
+router.put('/recipes/:id', async (req, res) => {
     try {
         let response = await service.updateRecipe(req.body, req.params.id);
         res.status(200).json({
@@ -61,25 +56,27 @@ app.put('/recipes/:id', async (req, res) => {
             'recipe': response,
             'id': req.params.id
         })
-    }catch (err){
+    } catch (err) {
         res.status(400).json({
             'error': err.message
         })
     }
 });
 
-app.delete('/recipes/:id', async (req, res) => {
-    try{
+router.delete('/recipes/:id', async (req, res) => {
+    try {
         await service.deleteRecipe(req.params.id);
         res.status(200).json({
             'message': 'success'
         })
-    }catch(err){
+    } catch (err) {
         res.status(400).json({
             'error': err.message
         })
     }
 })
+
+module.exports = router;
 
 
 

@@ -1,6 +1,6 @@
 module.exports = {
 
-    mapArray: function (array) {
+    mapRecipeArray: function (array) {
         if (!array){
             return [];
         }else{
@@ -9,6 +9,14 @@ module.exports = {
             newArray.push(this.mapRecipeToDto(entry));
         }
         return newArray;
+        }
+    },
+
+    mapIngredientArray: function (array) {
+        if (!array){
+            return [];
+        }else {
+            return Array.of(array)
         }
     },
 

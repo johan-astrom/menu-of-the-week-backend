@@ -5,7 +5,7 @@ module.exports = {
 
     getAllRecipes: async function () {
         try {
-            return mapper.mapArray(await repository.getAllRecipes());
+            return mapper.mapRecipeArray(await repository.getAllRecipes());
         } catch (err) {
             throw err
         }
@@ -13,7 +13,7 @@ module.exports = {
 
     getAllIngredients: async function () {
         try {
-            return mapper.mapArray(await repository.getAllIngredients());
+            return mapper.mapIngredientArray(await repository.getAllIngredients());
         } catch (err) {
             throw err;
         }
