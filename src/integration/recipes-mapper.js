@@ -47,6 +47,7 @@ let generateIngredients = function(recipe){
     let ingredients = [];
     for (let ingredient of recipe.ingredients){
         let mappedIngredient = {
+            id: ingredient.id,
             name: ingredient.ingredientName,
             quantity: ingredient.ingredientQty,
             measurement: ingredient.ingredientWeight,
@@ -62,6 +63,7 @@ let generateDtoIngredients = function(recipe){
 
     for (let ingredient of recipe.ingredients){
         let mappedIngredient = {
+            id: ingredient.id,
             ingredientName: ingredient.name,
             ingredientQty: ingredient.quantity,
             ingredientWeight: ingredient.measurement,

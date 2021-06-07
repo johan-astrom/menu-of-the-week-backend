@@ -92,6 +92,16 @@ module.exports = {
         }
     },
 
+    updateIngredientPurchased: async function(purchased, id){
+        let text = 'UPDATE ingredients SET purchased = $1 WHERE id = $2;';
+        let params = [purchased, id];
+        try{
+            await db.query(text, params);
+        }catch (err){
+            throw err;
+        }
+    },
+
     deleteRecipe: async function(id){
         const client = await db.connect();
         try {

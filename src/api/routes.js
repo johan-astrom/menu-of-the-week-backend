@@ -2,9 +2,11 @@ const service = require('../integration/recipes-service');
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 router.use(bodyParser.urlencoded({extended: false}));
 router.use(bodyParser.json());
+router.use(cors());
 
 router.get('/recipes', async (req, res) => {
     try {
@@ -62,6 +64,21 @@ router.put('/recipes/:id', async (req, res) => {
         })
     }
 });
+
+router.patch('/ingredients/:id', async(req, res) => {
+        try {
+            await service.updateIngredientPurchased(req.body.purchased, req.params.id);
+            res.status(200).json({
+                'message': 'success',
+                'id': req.params.id
+            })
+        }catch (err){
+            res.status(400).json({
+                'error': err.message
+            })
+        }
+    }
+)
 
 router.delete('/recipes/:id', async (req, res) => {
     try {

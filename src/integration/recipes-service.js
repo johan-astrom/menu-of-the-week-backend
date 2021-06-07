@@ -35,6 +35,14 @@ module.exports = {
         }
     },
 
+    updateIngredientPurchased: async function (purchased, id){
+        try{
+            return await repository.updateIngredientPurchased(purchased, id);
+        }catch (err){
+            throw err;
+        }
+    },
+
     deleteRecipe: async function (id) {
         try {
             return repository.deleteRecipe(id);
