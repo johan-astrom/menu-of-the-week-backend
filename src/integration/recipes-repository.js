@@ -102,6 +102,16 @@ module.exports = {
         }
     },
 
+    removeWeekday: async function(id){
+        let text = 'UPDATE recipes SET weekday = "" WHERE id = $1';
+        let params = [id];
+        try{
+            await db.query(text, params);
+        }catch (err){
+            throw err;
+        }
+    },
+
     deleteRecipe: async function(id){
         const client = await db.connect();
         try {

@@ -37,7 +37,15 @@ module.exports = {
 
     updateIngredientPurchased: async function (purchased, id){
         try{
-            return await repository.updateIngredientPurchased(purchased, id);
+            await repository.updateIngredientPurchased(purchased, id);
+        }catch (err){
+            throw err;
+        }
+    },
+
+    removeWeekday: async function (id){
+        try{
+            await repository.removeWeekday(id);
         }catch (err){
             throw err;
         }

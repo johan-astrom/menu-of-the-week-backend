@@ -65,14 +65,28 @@ router.put('/recipes/:id', async (req, res) => {
     }
 });
 
-router.patch('/ingredients/:id', async(req, res) => {
+router.patch('/recipes/:id', async (req, res) => {
+    try{
+        await service.removeWeekday(req.params.id);
+        res.status(200).json({
+            'message': 'success',
+            'id': req.params.id
+        })
+    }catch (err){
+        res.status(400).json({
+            'error': err.message
+        })
+    }
+})
+
+router.patch('/ingredients/:id', async (req, res) => {
         try {
             await service.updateIngredientPurchased(req.body.purchased, req.params.id);
             res.status(200).json({
                 'message': 'success',
                 'id': req.params.id
             })
-        }catch (err){
+        } catch (err) {
             res.status(400).json({
                 'error': err.message
             })
