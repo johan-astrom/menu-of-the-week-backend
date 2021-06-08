@@ -44,6 +44,7 @@ router.post('/recipes', async (req, res) => {
             'recipe': response
         });
     } catch (err) {
+        console.log(err)
         res.status(400).json({
             'error': err.message
         })
@@ -65,7 +66,7 @@ router.put('/recipes/:id', async (req, res) => {
     }
 });
 
-router.patch('/recipes/:id', async (req, res) => {
+router.get('/remove-weekday/:id', async (req, res) => {
     try{
         await service.removeWeekday(req.params.id);
         res.status(200).json({
@@ -73,6 +74,7 @@ router.patch('/recipes/:id', async (req, res) => {
             'id': req.params.id
         })
     }catch (err){
+        console.log(err)
         res.status(400).json({
             'error': err.message
         })

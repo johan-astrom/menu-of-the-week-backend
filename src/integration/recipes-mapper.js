@@ -44,32 +44,41 @@ module.exports = {
 }
 
 let generateIngredients = function(recipe){
-    let ingredients = [];
-    for (let ingredient of recipe.ingredients){
-        let mappedIngredient = {
-            id: ingredient.id,
-            name: ingredient.ingredientName,
-            quantity: ingredient.ingredientQty,
-            measurement: ingredient.ingredientWeight,
-            purchased: ingredient.purchased,
+    if (!recipe.ingredients){
+        return []
+    }else {
+        let ingredients = [];
+
+        for (let ingredient of recipe.ingredients) {
+            let mappedIngredient = {
+                id: ingredient.id,
+                name: ingredient.ingredientName,
+                quantity: ingredient.ingredientQty,
+                measurement: ingredient.ingredientWeight,
+                purchased: ingredient.purchased,
+            }
+            ingredients.push(mappedIngredient);
         }
-        ingredients.push(mappedIngredient);
+        return ingredients;
     }
-    return ingredients;
 }
 
 let generateDtoIngredients = function(recipe){
-    let ingredients = [];
+    if (!recipe.ingredients){
+        return []
+    }else {
+        let ingredients = [];
 
-    for (let ingredient of recipe.ingredients){
-        let mappedIngredient = {
-            id: ingredient.id,
-            ingredientName: ingredient.name,
-            ingredientQty: ingredient.quantity,
-            ingredientWeight: ingredient.measurement,
-            purchased: ingredient.purchased,
+        for (let ingredient of recipe.ingredients) {
+            let mappedIngredient = {
+                id: ingredient.id,
+                ingredientName: ingredient.name,
+                ingredientQty: ingredient.quantity,
+                ingredientWeight: ingredient.measurement,
+                purchased: ingredient.purchased,
+            }
+            ingredients.push(mappedIngredient);
         }
-        ingredients.push(mappedIngredient);
+        return ingredients;
     }
-    return ingredients;
 }

@@ -28,7 +28,6 @@ module.exports = {
 
     createRecipe: async function (recipe) {
         const client = await db.connect();
-
         try {
             await client.query('BEGIN');
 
@@ -45,15 +44,16 @@ module.exports = {
                 if (err) {
                     console.error('Error persisting recipe: ' + err.message);
                 } else {
-                    recipeId = result.rows[0].id;
+                    data.id = result.rows[0].id;
                 }
-
-                text = ingredientQuery(data, recipeId);
-                client.query(text, [], err => {
-                    if (err) {
-                        console.error('Error persisting ingredient: ' + err.message);
-                    }
-                });
+                if (recipe.ingredients) {
+                    text = ingredientQuery(data, data.id);
+                    client.query(text, [], err => {
+                        if (err) {
+                            console.error('Error persisting ingredient: ' + err.message);
+                        }
+                    });
+                }
             });
 
             await client.query('COMMIT');
@@ -103,8 +103,8 @@ module.exports = {
     },
 
     removeWeekday: async function(id){
-        let text = 'UPDATE recipes SET weekday = "" WHERE id = $1';
-        let params = [id];
+        let text = 'UPDATE recipes SET weekday = $1 WHERE id = $2;';
+        let params = ['', id];
         try{
             await db.query(text, params);
         }catch (err){
