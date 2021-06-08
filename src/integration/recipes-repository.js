@@ -46,7 +46,7 @@ module.exports = {
                 } else {
                     data.id = result.rows[0].id;
                 }
-                if (recipe.ingredients) {
+                if (recipe.ingredients.length) {
                     text = ingredientQuery(data, data.id);
                     client.query(text, [], err => {
                         if (err) {
