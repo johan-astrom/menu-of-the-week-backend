@@ -67,13 +67,13 @@ router.put('/recipes/:id', async (req, res) => {
 });
 
 router.get('/remove-weekday/:id', async (req, res) => {
-    try{
+    try {
         await service.removeWeekday(req.params.id);
         res.status(200).json({
             'message': 'success',
             'id': req.params.id
         })
-    }catch (err){
+    } catch (err) {
         console.log(err)
         res.status(400).json({
             'error': err.message

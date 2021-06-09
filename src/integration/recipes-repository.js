@@ -77,9 +77,10 @@ module.exports = {
 
             await client.query('DELETE FROM ingredients WHERE recipe_id=$1;', [id]);
 
-            text = ingredientQuery(recipe, id);
-            await client.query(text);
-
+            if (recipe.ingredients.length) {
+                text = ingredientQuery(recipe, id);
+                await client.query(text);
+            }
             await client.query('COMMIT');
 
             return recipe;
