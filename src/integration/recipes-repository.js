@@ -149,16 +149,23 @@ let getAll = async function (table) {
 
 function ingredientQuery(data, recipeId) {
     let params = [];
+    let text;
     for (let ingredient of data.ingredients) {
+        let amount;
+        if (ingredient.quantity){
+            amount=ingredient.quantity;
+            text = "INSERT INTO ingredients (name, quantity, purchased, recipe_id) VALUES %L;";
+        }else{
+            amount=ingredient.measurement;
+            text = "INSERT INTO ingredients (name, measurement, purchased, recipe_id) VALUES %L;";
+        }
         params.push([
             ingredient.name,
-            ingredient.quantity,
-            ingredient.measurement,
+            amount,
             ingredient.purchased,
             recipeId
         ]);
     }
-    let text = pgFormat("INSERT INTO ingredients (name, quantity, measurement, purchased, recipe_id) " +
-        "VALUES %L;", params);
-    return text;
+    let query = pgFormat(text, params);
+    return query;
 }
